@@ -1,142 +1,24 @@
 // src/App.tsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
-
-type ProductCategory = "Scooters" | "E-Bikes";
-
-type Product = {
-  id: number;
-  name: string;
-  category: ProductCategory;
-  price: number;
-  badge?: string;
-  image: string;
-  description: string;
-  specs: string[];
-};
-
-const PRODUCTS: Product[] = [
-  {
-    id: 1,
-    name: "E Bike Vogy",
-    category: "E-Bikes",
-    price: 1000,
-    badge: "Value",
-    image: "/img/E-bike-Vogy.jpeg",
-    description: "Affordable e-bike option for everyday city riding and quick errands.",
-    specs: ["Great starter model", "City-friendly ride", "Budget focused"],
-  },
-  {
-    id: 2,
-    name: "E Bike Ben",
-    category: "E-Bikes",
-    price: 2000,
-    badge: "Popular",
-    image: "/img/E-BIKE-BEN.jpeg",
-    description: "Balanced e-bike with solid performance for daily commuting around Miami.",
-    specs: ["Daily commuter", "Comfort + power", "Reliable build"],
-  },
-  {
-    id: 3,
-    name: "E Bike EVYBIKE",
-    category: "E-Bikes",
-    price: 1750,
-    image: "/img/E-BIKE-EVYBIKE.jpeg",
-    description: "Practical e-bike with a clean look and a smooth ride for city use.",
-    specs: ["Smooth ride", "Great for city", "Good mid-range choice"],
-  },
-  {
-    id: 4,
-    name: "E Bike Super R",
-    category: "E-Bikes",
-    price: 2800,
-    badge: "Best Seller",
-    image: "/img/E-bike-super-R.jpeg",
-    description: "Premium style e-bike built for comfort, presence, and everyday performance.",
-    specs: ["Premium style", "Comfort ride", "Strong presence"],
-  },
-  {
-    id: 5,
-    name: "E Bike Super 73",
-    category: "E-Bikes",
-    price: 3500,
-    badge: "Featured",
-    image: "/img/E-BIKE-SUPER-73.jpeg",
-    description: "Iconic Super 73 style e-bike with a bold look and premium feel.",
-    specs: ["Iconic design", "Premium feel", "Street-ready"],
-  },
-  {
-    id: 6,
-    name: "E Bike Solar",
-    category: "E-Bikes",
-    price: 4500,
-    badge: "Premium",
-    image: "/img/E-BIKE-SOLAR.jpeg",
-    description: "High-end e-bike option with a standout design and premium positioning.",
-    specs: ["High-end", "Premium design", "Top tier option"],
-  },
-  {
-    id: 7,
-    name: "E Bike Dirt",
-    category: "E-Bikes",
-    price: 4500,
-    badge: "Top Tier",
-    image: "/img/E-BIKE-DIRT.jpeg",
-    description: "Off-road oriented, premium e-bike build with aggressive styling and performance.",
-    specs: ["Off-road oriented", "Premium build", "High performance"],
-  },
-  {
-    id: 8,
-    name: "Electric Scooter Segway",
-    category: "Scooters",
-    price: 600,
-    badge: "Best Value",
-    image: "/img/Electric-scooter-segway.jpeg",
-    description: "Simple and reliable Segway scooter option for commuting and short trips.",
-    specs: ["Easy to use", "Reliable option", "Great value"],
-  },
-  {
-    id: 9,
-    name: "Electric Scooter Hiboy S2 Pro",
-    category: "Scooters",
-    price: 800,
-    badge: "Popular",
-    image: "/img/Electric-scooter-hiboy-s2-pro.jpeg",
-    description: "Comfortable commuter scooter with a solid balance of speed and ride feel.",
-    specs: ["Commuter friendly", "Comfort ride", "Strong value"],
-  },
-  {
-    id: 10,
-    name: "Electric Scooter E-Rev Off Road",
-    category: "Scooters",
-    price: 1500,
-    badge: "Off Road",
-    image: "/img/Electric-scooter-e-rev-off-Road.jpeg",
-    description: "Off-road scooter built for tougher rides and stronger presence.",
-    specs: ["Off-road ready", "Stronger build", "Premium scooter"],
-  },
-];
-
-const categories: ProductCategory[] = ["Scooters", "E-Bikes"];
-
-function formatUSD(value: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+import { PRODUCTS, categories, formatUSD, type Product, type ProductCategory } from "./data/products";
+import { useCart } from "./context/CartContext";
+import CartDrawer from "./components/CartDrawer";
+import CarouselShowcase from "./components/CarouselShowcase";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "All">("All");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuPanelOpen, setMenuPanelOpen] = useState(false);
 
+  // Cart
+  const { open: openCart, count: cartCount, add: addToCart } = useCart();
+
   // Details modal state
   const [detailsProduct, setDetailsProduct] = useState<Product | null>(null);
   const detailsOpen = !!detailsProduct;
   const detailsCloseBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  // Contact form prefill (optional but useful)
+  // Contact form prefill
   const [inquiryCategory, setInquiryCategory] = useState<ProductCategory | "">("");
   const [inquiryMessage, setInquiryMessage] = useState("");
 
@@ -145,8 +27,11 @@ export default function App() {
     return PRODUCTS.filter((p) => p.category === activeCategory);
   }, [activeCategory]);
 
-  const featured = PRODUCTS.slice(0, 4);
-  const heroCards = [PRODUCTS[4] ?? PRODUCTS[0], PRODUCTS[1] ?? PRODUCTS[0], PRODUCTS[7] ?? PRODUCTS[0]];
+  const featured = useMemo(() => PRODUCTS.slice(0, 4), []);
+  const heroCards = useMemo(
+    () => [PRODUCTS[4] ?? PRODUCTS[0], PRODUCTS[1] ?? PRODUCTS[0], PRODUCTS[7] ?? PRODUCTS[0]],
+    []
+  );
 
   const closeDetails = () => setDetailsProduct(null);
 
@@ -156,15 +41,14 @@ export default function App() {
     closeDetails();
   };
 
-  const openDetails = (p: Product) => {
-    setDetailsProduct(p);
-  };
+  const openDetails = (p: Product) => setDetailsProduct(p);
 
   const askForModel = (p: Product) => {
     setInquiryCategory(p.category);
-    setInquiryMessage(`Hi! I’m interested in ${p.name} (${formatUSD(p.price)}). Can you confirm availability and final price?`);
+    setInquiryMessage(
+      `Hi! I’m interested in ${p.name} (${formatUSD(p.price)}). Can you confirm availability and final price?`
+    );
     closeDetails();
-    // Let React paint first, then scroll
     setTimeout(() => {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
@@ -191,7 +75,6 @@ export default function App() {
 
   useEffect(() => {
     if (!detailsOpen) return;
-    // focus close button for accessibility
     setTimeout(() => detailsCloseBtnRef.current?.focus(), 0);
   }, [detailsOpen]);
 
@@ -247,9 +130,9 @@ export default function App() {
             </span>
           </button>
 
-          <a href="#catalog" className="nav-cta desktop-only" onClick={closeAllOverlays}>
-            View Products
-          </a>
+          <button className="nav-cta desktop-only" type="button" onClick={() => openCart(true)}>
+            Cart ({cartCount})
+          </button>
 
           <button
             className="mobile-menu-btn"
@@ -281,14 +164,21 @@ export default function App() {
           <a href="#contact" onClick={closeAllOverlays}>
             Contact
           </a>
-          <a href="#catalog" className="nav-cta" onClick={closeAllOverlays}>
-            View Products
-          </a>
+          <button className="nav-cta" type="button" onClick={() => openCart(true)}>
+            Cart ({cartCount})
+          </button>
         </div>
       </header>
 
+      {/* Cart Drawer */}
+      <CartDrawer />
+
       {/* Overlay menu */}
-      <div className={`nav-overlay ${menuPanelOpen ? "open" : ""}`} aria-hidden={!menuPanelOpen} onClick={() => setMenuPanelOpen(false)}>
+      <div
+        className={`nav-overlay ${menuPanelOpen ? "open" : ""}`}
+        aria-hidden={!menuPanelOpen}
+        onClick={() => setMenuPanelOpen(false)}
+      >
         <div
           id="edab-overlay-menu"
           className="nav-overlay-panel"
@@ -329,7 +219,12 @@ export default function App() {
           <div className="nav-overlay-right">
             <div className="nav-overlay-top">
               <p>Navigation</p>
-              <button type="button" className="nav-overlay-close" onClick={() => setMenuPanelOpen(false)} aria-label="Close menu">
+              <button
+                type="button"
+                className="nav-overlay-close"
+                onClick={() => setMenuPanelOpen(false)}
+                aria-label="Close menu"
+              >
                 <span />
                 <span />
               </button>
@@ -370,11 +265,7 @@ export default function App() {
       </div>
 
       {/* DETAILS MODAL */}
-      <div
-        className={`details-modal ${detailsOpen ? "open" : ""}`}
-        aria-hidden={!detailsOpen}
-        onClick={() => closeDetails()}
-      >
+      <div className={`details-modal ${detailsOpen ? "open" : ""}`} aria-hidden={!detailsOpen} onClick={closeDetails}>
         <div
           className="details-panel"
           role="dialog"
@@ -388,7 +279,13 @@ export default function App() {
               <h3 className="details-title">{detailsProduct?.name ?? ""}</h3>
             </div>
 
-            <button ref={detailsCloseBtnRef} className="details-close" type="button" onClick={closeDetails} aria-label="Close details">
+            <button
+              ref={detailsCloseBtnRef}
+              className="details-close"
+              type="button"
+              onClick={closeDetails}
+              aria-label="Close details"
+            >
               <span />
               <span />
             </button>
@@ -420,12 +317,12 @@ export default function App() {
                 </div>
 
                 <div className="details-actions">
-                  <button className="btn btn-primary" type="button" onClick={() => askForModel(detailsProduct)}>
-                    Ask for this model
+                  <button className="btn btn-primary" type="button" onClick={() => addToCart(detailsProduct)}>
+                    Add to cart
                   </button>
-                  <a className="btn btn-outline" href="#catalog" onClick={closeAllOverlays}>
-                    Back to catalog
-                  </a>
+                  <button className="btn btn-outline" type="button" onClick={() => askForModel(detailsProduct)}>
+                    Ask about it
+                  </button>
                 </div>
 
                 <p className="details-footnote">Tip: press ESC to close.</p>
@@ -493,9 +390,9 @@ export default function App() {
                   <a href="#catalog" className="btn btn-primary" onClick={closeAllOverlays}>
                     Explore Catalog
                   </a>
-                  <a href="#contact" className="btn btn-outline" onClick={closeAllOverlays}>
-                    Contact Us
-                  </a>
+                  <button className="btn btn-outline" type="button" onClick={() => openCart(true)}>
+                    Open Cart
+                  </button>
                 </div>
 
                 <div className="hero-contact-grid">
@@ -752,8 +649,8 @@ export default function App() {
                   </ul>
 
                   <div className="product-actions">
-                    <button className="btn btn-small btn-primary" type="button" onClick={() => askForModel(product)}>
-                      Ask for this model
+                    <button className="btn btn-small btn-primary" type="button" onClick={() => addToCart(product)}>
+                      Add to cart
                     </button>
                     <button type="button" className="btn btn-small btn-outline" onClick={() => openDetails(product)}>
                       Details
@@ -764,6 +661,9 @@ export default function App() {
             ))}
           </div>
         </section>
+
+        {/* ✅ Carousel arriba de Contact */}
+        <CarouselShowcase products={PRODUCTS} />
 
         {/* CONTACT */}
         <section id="contact" className="contact-block section-shell">
