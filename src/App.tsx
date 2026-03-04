@@ -71,7 +71,7 @@ const PRODUCTS: Product[] = [
     id: 6,
     name: "E Bike Solar",
     category: "E-Bikes",
-    price: 4000,
+    price: 4500,
     badge: "Premium",
     image: "/img/E-BIKE-SOLAR.jpeg",
     description: "High-end e-bike option with a standout design and premium positioning.",
