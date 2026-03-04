@@ -1,7 +1,7 @@
 // src/App.tsx
 import React, { useEffect, useMemo, useState } from "react";
 
-type ProductCategory = "Scooters" | "E-Bikes" | "E-Motos" | "Accessories";
+type ProductCategory = "Scooters" | "E-Bikes";
 
 type Product = {
   id: number;
@@ -15,87 +15,115 @@ type Product = {
 };
 
 const PRODUCTS: Product[] = [
+  // =========================
+  // E-BIKES (tus fotos nuevas)
+  // =========================
   {
     id: 1,
-    name: "Urban Volt S1",
-    category: "Scooters",
-    price: 899,
-    badge: "Best Seller",
-    image: "/img/scooter1.png",
-    description: "Compact electric scooter for city riding, daily commuting, and easy portability.",
-    specs: ["Up to 25 mi range", "20 mph top speed", "Foldable frame"],
+    name: "E Bike Vogy",
+    category: "E-Bikes",
+    price: 1000,
+    badge: "Value",
+    image: "/img/E-bike-Vogy.jpeg",
+    description: "Affordable e-bike option for everyday city riding and quick errands.",
+    specs: ["Great starter model", "City-friendly ride", "Budget focused"],
   },
   {
     id: 2,
-    name: "StreetRide X Pro",
-    category: "Scooters",
-    price: 1299,
-    badge: "New",
-   image: "/img/scooter2.png",
-    description: "Performance scooter with stronger motor output and improved suspension comfort.",
-    specs: ["Dual suspension", "Long range battery", "Disc brakes"],
+    name: "E Bike Ben",
+    category: "E-Bikes",
+    price: 2000,
+    badge: "Popular",
+    image: "/img/E-BIKE-BEN.jpeg",
+    description: "Balanced e-bike with solid performance for daily commuting around Miami.",
+    specs: ["Daily commuter", "Comfort + power", "Reliable build"],
   },
   {
     id: 3,
-    name: "E-Glide Trek 500",
+    name: "E Bike EVYBIKE",
     category: "E-Bikes",
-    price: 1699,
-    badge: "Popular",
-   image: "/img/scooter3.png",
-    description: "Reliable electric bike for urban rides and weekend trips with pedal assist modes.",
-    specs: ["Pedal assist", "Removable battery", "Rear rack ready"],
+    price: 1750,
+    image: "/img/E-BIKE-EVYBIKE.jpeg",
+    description: "Practical e-bike with a clean look and a smooth ride for city use.",
+    specs: ["Smooth ride", "Great for city", "Good mid-range choice"],
   },
   {
     id: 4,
-    name: "GreenMotion City",
+    name: "E Bike Super R",
     category: "E-Bikes",
-    price: 1899,
-  image: "/img/moto1.png",
-    description: "Clean and comfortable city e-bike with upright riding position and smooth power delivery.",
-    specs: ["Comfort frame", "LED display", "Integrated lights"],
+    price: 2800,
+    badge: "Best Seller",
+    image: "/img/E-bike-super-R.jpeg",
+    description: "Premium style e-bike built for comfort, presence, and everyday performance.",
+    specs: ["Premium style", "Comfort ride", "Strong presence"],
   },
   {
     id: 5,
-    name: "EDAB Moto One",
-    category: "E-Motos",
-    price: 3499,
+    name: "E Bike Super 73",
+    category: "E-Bikes",
+    price: 3500,
     badge: "Featured",
-    image: "/img/moto2.jpg",
-    description: "Electric moto designed for stylish commuting with torque-rich acceleration.",
-    specs: ["Fast acceleration", "Digital console", "Road-ready design"],
+    image: "/img/E-BIKE-SUPER-73.jpeg",
+    description: "Iconic Super 73 style e-bike with a bold look and premium feel.",
+    specs: ["Iconic design", "Premium feel", "Street-ready"],
   },
   {
     id: 6,
-    name: "VoltRider M2",
-    category: "E-Motos",
-    price: 4299,
-   image: "/img/moto3.png",
-    description: "Performance-focused electric moto with premium finishes and stable handling.",
-    specs: ["Extended range", "Hydraulic brakes", "Wide tires"],
+    name: "E Bike Solar",
+    category: "E-Bikes",
+    price: 4000,
+    badge: "Premium",
+    image: "/img/E-BIKE-SOLAR.jpeg",
+    description: "High-end e-bike option with a standout design and premium positioning.",
+    specs: ["High-end", "Premium design", "Top tier option"],
   },
   {
     id: 7,
-    name: "Smart Helmet Pro",
-    category: "Accessories",
-    price: 149,
-    image:
-      "/img/moto3.png",
-    description: "Protective helmet with modern design and comfortable everyday fit.",
-    specs: ["Lightweight shell", "Ventilated", "Adjustable fit"],
+    name: "E Bike Dirt",
+    category: "E-Bikes",
+    price: 4500,
+    badge: "Top Tier",
+    image: "/img/E-BIKE-DIRT.jpeg",
+    description: "Off-road oriented, premium e-bike build with aggressive styling and performance.",
+    specs: ["Off-road oriented", "Premium build", "High performance"],
   },
+
+  // =========================
+  // SCOOTERS (tus fotos nuevas)
+  // =========================
   {
     id: 8,
-    name: "Fast Charger 48V",
-    category: "Accessories",
-    price: 99,
-    image:
-      "/img/scooter2.png",
-    description: "Efficient replacement charger compatible with selected scooter and e-bike models.",
-    specs: ["Fast charge mode", "Overheat protection", "Compact"],
+    name: "Electric Scooter Segway",
+    category: "Scooters",
+    price: 600,
+    badge: "Best Value",
+    image: "/img/Electric-scooter-segway.jpeg",
+    description: "Simple and reliable Segway scooter option for commuting and short trips.",
+    specs: ["Easy to use", "Reliable option", "Great value"],
+  },
+  {
+    id: 9,
+    name: "Electric Scooter Hiboy S2 Pro",
+    category: "Scooters",
+    price: 800,
+    badge: "Popular",
+    image: "/img/Electric-scooter-hiboy-s2-pro.jpeg",
+    description: "Comfortable commuter scooter with a solid balance of speed and ride feel.",
+    specs: ["Commuter friendly", "Comfort ride", "Strong value"],
+  },
+  {
+    id: 10,
+    name: "Electric Scooter E-Rev Off Road",
+    category: "Scooters",
+    price: 1500,
+    badge: "Off Road",
+    image: "/img/Electric-scooter-e-rev-off-Road.jpeg",
+    description: "Off-road scooter built for tougher rides and stronger presence.",
+    specs: ["Off-road ready", "Stronger build", "Premium scooter"],
   },
 ];
 
-const categories: ProductCategory[] = ["Scooters", "E-Bikes", "E-Motos", "Accessories"];
+const categories: ProductCategory[] = ["Scooters", "E-Bikes"];
 
 function formatUSD(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -116,7 +144,12 @@ function App() {
   }, [activeCategory]);
 
   const featured = PRODUCTS.slice(0, 4);
-  const heroCards = [PRODUCTS[4] ?? PRODUCTS[0], PRODUCTS[2] ?? PRODUCTS[1], PRODUCTS[5] ?? PRODUCTS[3]];
+
+  const heroCards = [
+    PRODUCTS[4] ?? PRODUCTS[0],
+    PRODUCTS[1] ?? PRODUCTS[0],
+    PRODUCTS[7] ?? PRODUCTS[0],
+  ];
 
   const closeAllMenus = () => {
     setMobileMenuOpen(false);
@@ -154,8 +187,8 @@ function App() {
       <header className="topbar">
         <a href="#home" className="brand" aria-label="EDAB Electric LLC home" onClick={closeAllMenus}>
           <div className="brand-mark logo-mark">
-  <img src="/img/edab-only-logo.PNG" alt="EDAB Electric LLC logo" />
-</div>
+            <img src="/img/edab-only-logo.PNG" alt="EDAB Electric LLC logo" />
+          </div>
           <div className="brand-copy">
             <strong>EDAB ELECTRIC LLC</strong>
             <small>Electric Mobility • Miami</small>
@@ -207,7 +240,6 @@ function App() {
           </button>
         </div>
 
-        {/* Mobile dropdown quick menu */}
         <div className={`nav mobile-quick-nav ${mobileMenuOpen ? "open" : ""}`}>
           <a href="#home" onClick={closeAllMenus}>
             Home
@@ -227,7 +259,6 @@ function App() {
         </div>
       </header>
 
-      {/* Overlay menu inspired by refs */}
       <div
         className={`nav-overlay ${menuPanelOpen ? "open" : ""}`}
         aria-hidden={!menuPanelOpen}
@@ -324,10 +355,7 @@ function App() {
         <section id="home" className="hero-shell section-shell">
           <div className="hero-stage">
             <div className="hero-backdrop">
-              <img
-                src="/img/edab-logo.PNG"
-                alt="EDAB electric mobility hero visual"
-              />
+              <img src="/img/edab-logo.PNG" alt="EDAB electric mobility hero visual" />
               <div className="hero-backdrop-gradient" />
             </div>
 
@@ -355,7 +383,7 @@ function App() {
 
                 <div className="hero-kicker">
                   <h2>
-                    Scooters + Bikes + Motos
+                    Scooters + E-Bikes
                     <br />
                     <span>Built for Miami streets.</span>
                   </h2>
@@ -364,9 +392,8 @@ function App() {
 
               <div className="hero-content-right">
                 <p className="hero-description">
-                  EDAB ELECTRIC LLC offers electric scooters, e-bikes, electric motos and accessories
-                  with a stronger visual identity and a premium browsing experience designed for modern
-                  customers.
+                  EDAB ELECTRIC LLC offers electric scooters and e-bikes with a stronger visual identity
+                  and a premium browsing experience designed for modern customers.
                 </p>
 
                 <div className="hero-actions">
@@ -398,14 +425,14 @@ function App() {
             <div className="hero-bottom-strip">
               <p>
                 <span className="dot" />
-                Electric scooters • E-bikes • E-motos • Accessories
+                Electric scooters • E-bikes
               </p>
               <a href="#catalog">BROWSE PRODUCTS →</a>
             </div>
           </div>
         </section>
 
-        {/* VISUAL MOSAIC / OUR WORK INSPIRED */}
+        {/* VISUAL MOSAIC */}
         <section className="visual-lab section-shell">
           <div className="visual-lab-head">
             <p className="eyebrow">{`{ FEATURED COLLECTION }`}</p>
@@ -419,7 +446,7 @@ function App() {
             <article className="visual-card visual-card-main">
               <img src={heroCards[0].image} alt={heroCards[0].name} />
               <div className="visual-card-overlay">
-                <p className="visual-card-tag">Featured Moto</p>
+                <p className="visual-card-tag">Featured</p>
                 <h3>{heroCards[0].name}</h3>
                 <p>{heroCards[0].description}</p>
               </div>
@@ -450,10 +477,7 @@ function App() {
                 <br />
                 IMPACT.
               </h3>
-              <p>
-                Premium, bold, and product-focused layout that feels different from the usual ecommerce
-                templates.
-              </p>
+              <p>Premium, bold, and product-focused layout that feels different from the usual ecommerce templates.</p>
               <a href="#catalog">View catalog →</a>
             </div>
           </div>
@@ -481,17 +505,13 @@ function App() {
                 onClick={() => setActiveCategory(cat)}
                 type="button"
               >
-                <span className="category-index">
-                  {String(categories.indexOf(cat) + 1).padStart(2, "0")}
-                </span>
+                <span className="category-index">{String(categories.indexOf(cat) + 1).padStart(2, "0")}</span>
 
                 <div className="category-copy">
                   <h3>{cat}</h3>
                   <p>
                     {cat === "Scooters" && "Compact, practical, and easy for city commuting."}
                     {cat === "E-Bikes" && "Comfortable electric bicycles for everyday rides."}
-                    {cat === "E-Motos" && "Powerful electric motos for modern mobility."}
-                    {cat === "Accessories" && "Helmets, chargers, and essentials for riders."}
                   </p>
                 </div>
 
@@ -535,7 +555,7 @@ function App() {
           </div>
         </section>
 
-        {/* BIG STATEMENT / ABOUT INSPIRED */}
+        {/* ABOUT */}
         <section id="about" className="impact-block section-shell">
           <div className="impact-shell">
             <div className="impact-grid-lines" aria-hidden="true" />
@@ -556,9 +576,9 @@ function App() {
 
             <div className="impact-bottom">
               <p>
-                EDAB ELECTRIC LLC combines practical electric mobility options with a cleaner, stronger
-                visual presence. The goal is simple: help customers discover the right scooter, e-bike,
-                or e-moto faster, with a premium and modern shopping experience.
+                EDAB ELECTRIC LLC combines practical electric mobility options with a cleaner, stronger visual presence.
+                The goal is simple: help customers discover the right scooter or e-bike faster, with a premium and modern
+                browsing experience.
               </p>
 
               <div className="impact-stats">
@@ -572,7 +592,7 @@ function App() {
                 </div>
                 <div className="stat-box">
                   <span>Products</span>
-                  <strong>Scooters • E-Bikes • E-Motos</strong>
+                  <strong>Scooters • E-Bikes</strong>
                 </div>
                 <div className="stat-box">
                   <span>Support</span>
@@ -594,11 +614,7 @@ function App() {
             </div>
 
             <div className="catalog-filters" role="tablist" aria-label="Product categories">
-              <button
-                className={activeCategory === "All" ? "active" : ""}
-                onClick={() => setActiveCategory("All")}
-                type="button"
-              >
+              <button className={activeCategory === "All" ? "active" : ""} onClick={() => setActiveCategory("All")} type="button">
                 All
               </button>
               {categories.map((cat) => (
@@ -663,8 +679,8 @@ function App() {
               </h2>
 
               <p>
-                Contact EDAB ELECTRIC LLC for pricing, availability, and model details. We can help
-                you choose the best option based on your daily use, range, and budget.
+                Contact EDAB ELECTRIC LLC for pricing, availability, and model details. We can help you choose the best option
+                based on your daily use, range, and budget.
               </p>
 
               <div className="contact-list">
@@ -705,8 +721,6 @@ function App() {
                   </option>
                   <option>Scooters</option>
                   <option>E-Bikes</option>
-                  <option>E-Motos</option>
-                  <option>Accessories</option>
                 </select>
               </label>
 
@@ -726,7 +740,7 @@ function App() {
       <footer className="footer section-shell">
         <div className="footer-brand">
           <h3>EDAB ELECTRIC LLC</h3>
-          <p>Electric scooters, e-bikes, e-motos & accessories in Miami.</p>
+          <p>Electric scooters and e-bikes in Miami.</p>
         </div>
 
         <div className="footer-links">
