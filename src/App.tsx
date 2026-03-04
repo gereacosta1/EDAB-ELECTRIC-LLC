@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type ProductCategory = "Scooters" | "E-Bikes";
 
@@ -15,9 +15,6 @@ type Product = {
 };
 
 const PRODUCTS: Product[] = [
-  // =========================
-  // E-BIKES (tus fotos nuevas)
-  // =========================
   {
     id: 1,
     name: "E Bike Vogy",
@@ -87,10 +84,6 @@ const PRODUCTS: Product[] = [
     description: "Off-road oriented, premium e-bike build with aggressive styling and performance.",
     specs: ["Off-road oriented", "Premium build", "High performance"],
   },
-
-  // =========================
-  // SCOOTERS (tus fotos nuevas)
-  // =========================
   {
     id: 8,
     name: "Electric Scooter Segway",
@@ -133,10 +126,19 @@ function formatUSD(value: number) {
   }).format(value);
 }
 
-function App() {
+export default function App() {
   const [activeCategory, setActiveCategory] = useState<ProductCategory | "All">("All");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [menuPanelOpen, setMenuPanelOpen] = useState(false);
+
+  // Details modal state
+  const [detailsProduct, setDetailsProduct] = useState<Product | null>(null);
+  const detailsOpen = !!detailsProduct;
+  const detailsCloseBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // Contact form prefill (optional but useful)
+  const [inquiryCategory, setInquiryCategory] = useState<ProductCategory | "">("");
+  const [inquiryMessage, setInquiryMessage] = useState("");
 
   const filteredProducts = useMemo(() => {
     if (activeCategory === "All") return PRODUCTS;
@@ -144,16 +146,28 @@ function App() {
   }, [activeCategory]);
 
   const featured = PRODUCTS.slice(0, 4);
+  const heroCards = [PRODUCTS[4] ?? PRODUCTS[0], PRODUCTS[1] ?? PRODUCTS[0], PRODUCTS[7] ?? PRODUCTS[0]];
 
-  const heroCards = [
-    PRODUCTS[4] ?? PRODUCTS[0],
-    PRODUCTS[1] ?? PRODUCTS[0],
-    PRODUCTS[7] ?? PRODUCTS[0],
-  ];
+  const closeDetails = () => setDetailsProduct(null);
 
-  const closeAllMenus = () => {
+  const closeAllOverlays = () => {
     setMobileMenuOpen(false);
     setMenuPanelOpen(false);
+    closeDetails();
+  };
+
+  const openDetails = (p: Product) => {
+    setDetailsProduct(p);
+  };
+
+  const askForModel = (p: Product) => {
+    setInquiryCategory(p.category);
+    setInquiryMessage(`Hi! I’m interested in ${p.name} (${formatUSD(p.price)}). Can you confirm availability and final price?`);
+    closeDetails();
+    // Let React paint first, then scroll
+    setTimeout(() => {
+      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
   };
 
   useEffect(() => {
@@ -161,21 +175,25 @@ function App() {
       if (e.key === "Escape") {
         setMenuPanelOpen(false);
         setMobileMenuOpen(false);
+        closeDetails();
       }
     };
 
-    if (menuPanelOpen || mobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    const anyOverlayOpen = menuPanelOpen || mobileMenuOpen || detailsOpen;
+    document.body.style.overflow = anyOverlayOpen ? "hidden" : "";
 
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = "";
     };
-  }, [menuPanelOpen, mobileMenuOpen]);
+  }, [menuPanelOpen, mobileMenuOpen, detailsOpen]);
+
+  useEffect(() => {
+    if (!detailsOpen) return;
+    // focus close button for accessibility
+    setTimeout(() => detailsCloseBtnRef.current?.focus(), 0);
+  }, [detailsOpen]);
 
   return (
     <div className="edab-app">
@@ -185,7 +203,7 @@ function App() {
       <div className="rings" aria-hidden="true" />
 
       <header className="topbar">
-        <a href="#home" className="brand" aria-label="EDAB Electric LLC home" onClick={closeAllMenus}>
+        <a href="#home" className="brand" aria-label="EDAB Electric LLC home" onClick={closeAllOverlays}>
           <div className="brand-mark logo-mark">
             <img src="/img/edab-only-logo.PNG" alt="EDAB Electric LLC logo" />
           </div>
@@ -196,10 +214,18 @@ function App() {
         </a>
 
         <nav className="nav nav-inline" aria-label="Primary navigation">
-          <a href="#home">Home</a>
-          <a href="#catalog">Catalog</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+          <a href="#home" onClick={closeAllOverlays}>
+            Home
+          </a>
+          <a href="#catalog" onClick={closeAllOverlays}>
+            Catalog
+          </a>
+          <a href="#about" onClick={closeAllOverlays}>
+            About
+          </a>
+          <a href="#contact" onClick={closeAllOverlays}>
+            Contact
+          </a>
         </nav>
 
         <div className="topbar-actions">
@@ -211,6 +237,7 @@ function App() {
             onClick={() => {
               setMenuPanelOpen((v) => !v);
               setMobileMenuOpen(false);
+              closeDetails();
             }}
           >
             <span className="nav-menu-pill-label">{menuPanelOpen ? "Close" : "Menu"}</span>
@@ -220,7 +247,7 @@ function App() {
             </span>
           </button>
 
-          <a href="#catalog" className="nav-cta desktop-only" onClick={closeAllMenus}>
+          <a href="#catalog" className="nav-cta desktop-only" onClick={closeAllOverlays}>
             View Products
           </a>
 
@@ -229,6 +256,7 @@ function App() {
             onClick={() => {
               setMobileMenuOpen((v) => !v);
               setMenuPanelOpen(false);
+              closeDetails();
             }}
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
@@ -241,29 +269,26 @@ function App() {
         </div>
 
         <div className={`nav mobile-quick-nav ${mobileMenuOpen ? "open" : ""}`}>
-          <a href="#home" onClick={closeAllMenus}>
+          <a href="#home" onClick={closeAllOverlays}>
             Home
           </a>
-          <a href="#catalog" onClick={closeAllMenus}>
+          <a href="#catalog" onClick={closeAllOverlays}>
             Catalog
           </a>
-          <a href="#about" onClick={closeAllMenus}>
+          <a href="#about" onClick={closeAllOverlays}>
             About
           </a>
-          <a href="#contact" onClick={closeAllMenus}>
+          <a href="#contact" onClick={closeAllOverlays}>
             Contact
           </a>
-          <a href="#catalog" className="nav-cta" onClick={closeAllMenus}>
+          <a href="#catalog" className="nav-cta" onClick={closeAllOverlays}>
             View Products
           </a>
         </div>
       </header>
 
-      <div
-        className={`nav-overlay ${menuPanelOpen ? "open" : ""}`}
-        aria-hidden={!menuPanelOpen}
-        onClick={() => setMenuPanelOpen(false)}
-      >
+      {/* Overlay menu */}
+      <div className={`nav-overlay ${menuPanelOpen ? "open" : ""}`} aria-hidden={!menuPanelOpen} onClick={() => setMenuPanelOpen(false)}>
         <div
           id="edab-overlay-menu"
           className="nav-overlay-panel"
@@ -282,8 +307,7 @@ function App() {
               Navigation
             </h2>
             <p className="nav-overlay-copy">
-              Clean navigation with a bolder editorial layout inspired by studio-style menus and modern
-              product brands.
+              Clean navigation with a bolder editorial layout inspired by studio-style menus and modern product brands.
             </p>
 
             <div className="nav-overlay-capsules" aria-hidden="true">
@@ -305,31 +329,26 @@ function App() {
           <div className="nav-overlay-right">
             <div className="nav-overlay-top">
               <p>Navigation</p>
-              <button
-                type="button"
-                className="nav-overlay-close"
-                onClick={() => setMenuPanelOpen(false)}
-                aria-label="Close menu"
-              >
+              <button type="button" className="nav-overlay-close" onClick={() => setMenuPanelOpen(false)} aria-label="Close menu">
                 <span />
                 <span />
               </button>
             </div>
 
             <div className="nav-overlay-links">
-              <a href="#home" onClick={closeAllMenus}>
+              <a href="#home" onClick={closeAllOverlays}>
                 <span>01</span>
                 Home
               </a>
-              <a href="#catalog" onClick={closeAllMenus}>
+              <a href="#catalog" onClick={closeAllOverlays}>
                 <span>02</span>
                 Catalog
               </a>
-              <a href="#about" onClick={closeAllMenus}>
+              <a href="#about" onClick={closeAllOverlays}>
                 <span>03</span>
                 About
               </a>
-              <a href="#contact" onClick={closeAllMenus}>
+              <a href="#contact" onClick={closeAllOverlays}>
                 <span>04</span>
                 Contact
               </a>
@@ -342,11 +361,77 @@ function App() {
                 <p>765 NE 79th St, Miami FL 33138</p>
               </div>
 
-              <a href="#catalog" className="nav-overlay-cta" onClick={closeAllMenus}>
+              <a href="#catalog" className="nav-overlay-cta" onClick={closeAllOverlays}>
                 View Products →
               </a>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* DETAILS MODAL */}
+      <div
+        className={`details-modal ${detailsOpen ? "open" : ""}`}
+        aria-hidden={!detailsOpen}
+        onClick={() => closeDetails()}
+      >
+        <div
+          className="details-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label={detailsProduct ? `Details for ${detailsProduct.name}` : "Product details"}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="details-top">
+            <div className="details-top-left">
+              <p className="details-kicker">Product details</p>
+              <h3 className="details-title">{detailsProduct?.name ?? ""}</h3>
+            </div>
+
+            <button ref={detailsCloseBtnRef} className="details-close" type="button" onClick={closeDetails} aria-label="Close details">
+              <span />
+              <span />
+            </button>
+          </div>
+
+          {detailsProduct ? (
+            <div className="details-body">
+              <div className="details-media">
+                <img src={detailsProduct.image} alt={detailsProduct.name} />
+                <span className="details-chip">{detailsProduct.category}</span>
+                {detailsProduct.badge ? <span className="details-badge">{detailsProduct.badge}</span> : null}
+              </div>
+
+              <div className="details-content">
+                <div className="details-price-row">
+                  <strong className="details-price">{formatUSD(detailsProduct.price)}</strong>
+                  <span className="details-sub">Miami • In-store pickup / local inquiry</span>
+                </div>
+
+                <p className="details-desc">{detailsProduct.description}</p>
+
+                <div className="details-specs">
+                  <p className="details-specs-title">Highlights</p>
+                  <ul>
+                    {detailsProduct.specs.map((s) => (
+                      <li key={`${detailsProduct.id}-${s}`}>{s}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="details-actions">
+                  <button className="btn btn-primary" type="button" onClick={() => askForModel(detailsProduct)}>
+                    Ask for this model
+                  </button>
+                  <a className="btn btn-outline" href="#catalog" onClick={closeAllOverlays}>
+                    Back to catalog
+                  </a>
+                </div>
+
+                <p className="details-footnote">Tip: press ESC to close.</p>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -362,10 +447,18 @@ function App() {
             <div className="hero-ui-row">
               <p className="hero-mini-label">// EDAB ELECTRIC LLC</p>
               <div className="hero-ui-links">
-                <a href="#about">ABOUT</a>
-                <a href="#catalog">WORKS</a>
-                <a href="#catalog">PRODUCTS</a>
-                <a href="#contact">CONTACT</a>
+                <a href="#about" onClick={closeAllOverlays}>
+                  ABOUT
+                </a>
+                <a href="#catalog" onClick={closeAllOverlays}>
+                  WORKS
+                </a>
+                <a href="#catalog" onClick={closeAllOverlays}>
+                  PRODUCTS
+                </a>
+                <a href="#contact" onClick={closeAllOverlays}>
+                  CONTACT
+                </a>
               </div>
             </div>
 
@@ -392,15 +485,15 @@ function App() {
 
               <div className="hero-content-right">
                 <p className="hero-description">
-                  EDAB ELECTRIC LLC offers electric scooters and e-bikes with a stronger visual identity
-                  and a premium browsing experience designed for modern customers.
+                  EDAB ELECTRIC LLC offers electric scooters and e-bikes with a stronger visual identity and a premium browsing
+                  experience designed for modern customers.
                 </p>
 
                 <div className="hero-actions">
-                  <a href="#catalog" className="btn btn-primary">
+                  <a href="#catalog" className="btn btn-primary" onClick={closeAllOverlays}>
                     Explore Catalog
                   </a>
-                  <a href="#contact" className="btn btn-outline">
+                  <a href="#contact" className="btn btn-outline" onClick={closeAllOverlays}>
                     Contact Us
                   </a>
                 </div>
@@ -427,7 +520,9 @@ function App() {
                 <span className="dot" />
                 Electric scooters • E-bikes
               </p>
-              <a href="#catalog">BROWSE PRODUCTS →</a>
+              <a href="#catalog" onClick={closeAllOverlays}>
+                BROWSE PRODUCTS →
+              </a>
             </div>
           </div>
         </section>
@@ -478,7 +573,9 @@ function App() {
                 IMPACT.
               </h3>
               <p>Premium, bold, and product-focused layout that feels different from the usual ecommerce templates.</p>
-              <a href="#catalog">View catalog →</a>
+              <a href="#catalog" onClick={closeAllOverlays}>
+                View catalog →
+              </a>
             </div>
           </div>
         </section>
@@ -492,7 +589,7 @@ function App() {
                 What we sell <span>at EDAB</span>
               </h2>
             </div>
-            <a href="#catalog" className="section-link">
+            <a href="#catalog" className="section-link" onClick={closeAllOverlays}>
               All Products
             </a>
           </div>
@@ -547,7 +644,9 @@ function App() {
 
                   <div className="featured-bottom">
                     <strong>{formatUSD(item.price)}</strong>
-                    <a href="#contact">Inquire →</a>
+                    <button className="link-like" type="button" onClick={() => openDetails(item)}>
+                      Details →
+                    </button>
                   </div>
                 </div>
               </article>
@@ -559,7 +658,6 @@ function App() {
         <section id="about" className="impact-block section-shell">
           <div className="impact-shell">
             <div className="impact-grid-lines" aria-hidden="true" />
-
             <div className="impact-top">
               <p className="eyebrow light">{`{ ABOUT US }`}</p>
             </div>
@@ -576,9 +674,9 @@ function App() {
 
             <div className="impact-bottom">
               <p>
-                EDAB ELECTRIC LLC combines practical electric mobility options with a cleaner, stronger visual presence.
-                The goal is simple: help customers discover the right scooter or e-bike faster, with a premium and modern
-                browsing experience.
+                EDAB ELECTRIC LLC combines practical electric mobility options with a cleaner, stronger visual presence. The
+                goal is simple: help customers discover the right scooter or e-bike faster, with a premium and modern browsing
+                experience.
               </p>
 
               <div className="impact-stats">
@@ -654,10 +752,10 @@ function App() {
                   </ul>
 
                   <div className="product-actions">
-                    <a href="#contact" className="btn btn-small btn-primary">
+                    <button className="btn btn-small btn-primary" type="button" onClick={() => askForModel(product)}>
                       Ask for this model
-                    </a>
-                    <button type="button" className="btn btn-small btn-outline">
+                    </button>
+                    <button type="button" className="btn btn-small btn-outline" onClick={() => openDetails(product)}>
                       Details
                     </button>
                   </div>
@@ -715,18 +813,23 @@ function App() {
 
               <label>
                 Interested In
-                <select defaultValue="">
+                <select value={inquiryCategory} onChange={(e) => setInquiryCategory(e.target.value as ProductCategory | "")}>
                   <option value="" disabled>
                     Select a category
                   </option>
-                  <option>Scooters</option>
-                  <option>E-Bikes</option>
+                  <option value="Scooters">Scooters</option>
+                  <option value="E-Bikes">E-Bikes</option>
                 </select>
               </label>
 
               <label>
                 Message
-                <textarea rows={4} placeholder="I’m interested in pricing / availability for..." />
+                <textarea
+                  rows={4}
+                  placeholder="I’m interested in pricing / availability for..."
+                  value={inquiryMessage}
+                  onChange={(e) => setInquiryMessage(e.target.value)}
+                />
               </label>
 
               <button type="submit" className="btn btn-primary form-submit">
@@ -744,10 +847,18 @@ function App() {
         </div>
 
         <div className="footer-links">
-          <a href="#home">Home</a>
-          <a href="#catalog">Catalog</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+          <a href="#home" onClick={closeAllOverlays}>
+            Home
+          </a>
+          <a href="#catalog" onClick={closeAllOverlays}>
+            Catalog
+          </a>
+          <a href="#about" onClick={closeAllOverlays}>
+            About
+          </a>
+          <a href="#contact" onClick={closeAllOverlays}>
+            Contact
+          </a>
         </div>
 
         <p className="footer-copy">© {new Date().getFullYear()} EDAB ELECTRIC LLC. All rights reserved.</p>
@@ -755,5 +866,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
