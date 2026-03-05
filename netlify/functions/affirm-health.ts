@@ -15,6 +15,7 @@ function safeInfo(v?: string) {
 export const handler: Handler = async () => {
   const pub = process.env.AFFIRM_PUBLIC_KEY || "";
   const priv = process.env.AFFIRM_PRIVATE_KEY || "";
+
   const base = (process.env.AFFIRM_BASE_URL || "https://api.affirm.com").replace(/\/$/, "");
   const site = (process.env.SITE_URL || "").replace(/\/$/, "");
 
