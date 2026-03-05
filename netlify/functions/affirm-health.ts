@@ -1,15 +1,8 @@
 // netlify/functions/affirm-health.ts
 import type { Handler } from "@netlify/functions";
 
-function safeInfo(v?: string) {
-  const s = String(v || "");
-  return {
-    present: !!s,
-    length: s.length,
-    last4: s.slice(-4),
-    hasWhitespace: /\s/.test(s), // espacios, tabs, \n
-    startsWith: s.slice(0, 4),
-  };
+function has(name: string) {
+  return !!process.env[name];
 }
 
 export const handler: Handler = async () => {
@@ -23,11 +16,15 @@ export const handler: Handler = async () => {
     statusCode: 200,
     body: JSON.stringify({
       ok: true,
-      affirm_base_url: base,
-      site_url: site,
-      affirm_public_key: safeInfo(pub),
-      affirm_private_key: safeInfo(priv),
-      note: "If hasWhitespace=true or length looks wrong, re-paste keys in Netlify env vars (no spaces/newlines).",
+      envCheck: {
+        has_AFFIRM_PUBLIC_KEY: has("AFFIRM_PUBLIC_KEY"),
+        has_AFFIRM_PRIVATE_KEY: has("AFFIRM_PRIVATE_KEY"),
+        affirm_public_key_last4: pub.slice(-4),
+        affirm_private_key_last4: priv.slice(-4),
+        affirm_base_url: base,
+        site_url: site,
+      },
+      note: "If checkout fails, check Netlify Function logs for affirm-create-checkout.",
     }),
   };
 };

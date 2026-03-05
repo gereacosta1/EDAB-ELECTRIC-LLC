@@ -40,9 +40,11 @@ async function startAffirmCheckout(items: CartItem[]) {
     data = { error: text || "Unknown error" };
   }
 
-  // Afirm suele devolver error dentro de "affirm"
   if (!res.ok) {
-    const msg = data?.affirm?.message || data?.affirm?.details || data?.error || "Affirm checkout failed";
+    const msg =
+      data?.affirm?.code === "public-api-key-invalid"
+        ? "public-api-key-invalid"
+        : data?.affirm?.message || data?.affirm?.details || data?.error || "Affirm checkout failed";
     throw new Error(msg);
   }
 
@@ -80,7 +82,14 @@ export default function CartDrawer() {
       await startAffirmCheckout(state.items);
     } catch (e: any) {
       open(true);
-      alert(e?.message || "Affirm checkout error");
+
+      const msg = String(e?.message || "");
+      if (msg.includes("public-api-key-invalid")) {
+        alert("Affirm is pending merchant activation. Please use Stripe for now.");
+      } else {
+        alert(msg || "Affirm checkout error");
+      }
+
       setLoading(false);
     }
   };
