@@ -72,31 +72,41 @@ export const handler: Handler = async (event) => {
       };
     });
 
-    const subtotal = affirmItems.reduce((s: number, it: any) => s + it.unit_price * it.qty, 0);
+    const subtotal = affirmItems.reduce((s: number, it: any) => s + (Number(it.unit_price) || 0) * (Number(it.qty) || 0), 0);
 
-    // Ajustables a futuro:
     const shipping_amount = 0;
     const tax_amount = 0;
+
     const total = subtotal + shipping_amount + tax_amount;
 
-    // SPA-friendly
+    // ✅ Pre-validación (evita errores raros)
+    if (!Number.isFinite(total) || !Number.isInteger(total) || total <= 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          error: "Computed total is invalid before calling Affirm",
+          debug: { subtotal, shipping_amount, tax_amount, total },
+        }),
+      };
+    }
+
+    // SPA-friendly return
     const confirmUrl = `${SITE_URL}/?affirm=confirm`;
     const cancelUrl = `${SITE_URL}/?affirm=cancel`;
 
+    // ✅ IMPORTANTE: Direct Checkout espera los campos al TOP-LEVEL (no dentro de "checkout")
     const payload = {
-      checkout: {
-        merchant: {
-          name: "EDAB ELECTRIC LLC",
-          user_confirmation_url: confirmUrl,
-          user_cancel_url: cancelUrl,
-          user_confirmation_url_action: "GET",
-        },
-        items: affirmItems,
-        currency: "USD",
-        shipping_amount,
-        tax_amount,
-        total,
+      merchant: {
+        name: "EDAB ELECTRIC LLC",
+        user_confirmation_url: confirmUrl,
+        user_cancel_url: cancelUrl,
+        user_confirmation_url_action: "GET",
       },
+      items: affirmItems,
+      currency: "USD",
+      shipping_amount,
+      tax_amount,
+      total,
     };
 
     const auth = Buffer.from(`${AFFIRM_PUBLIC_KEY}:${AFFIRM_PRIVATE_KEY}`).toString("base64");
@@ -128,7 +138,7 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    const redirectUrl = data?.redirect_url || data?.redirect_url_checkout || data?.url;
+    const redirectUrl = data?.redirect_url || data?.url;
 
     if (!redirectUrl) {
       return {
