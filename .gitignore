@@ -21,3 +21,6 @@ pnpm-debug.log*
 
 # optional
 coverage
+
+# TypeScript build cache
+*.tsbuildinfo

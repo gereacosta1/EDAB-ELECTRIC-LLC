@@ -11,7 +11,6 @@ async function startStripeCheckout(items: CartItem[]) {
     body: JSON.stringify({ items }),
   });
 
-  // Be defensive: function might not return JSON on errors
   let data: any = null;
   const text = await res.text();
   try {
@@ -23,8 +22,33 @@ async function startStripeCheckout(items: CartItem[]) {
   if (!res.ok) throw new Error(data?.error || "Stripe checkout failed");
   if (!data?.url) throw new Error("Missing Stripe session url");
 
-  // redirect
   window.location.href = data.url as string;
+}
+
+async function startAffirmCheckout(items: CartItem[]) {
+  const res = await fetch("/.netlify/functions/affirm-create-checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  });
+
+  let data: any = null;
+  const text = await res.text();
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = { error: text || "Unknown error" };
+  }
+
+  // Afirm suele devolver error dentro de "affirm"
+  if (!res.ok) {
+    const msg = data?.affirm?.message || data?.affirm?.details || data?.error || "Affirm checkout failed";
+    throw new Error(msg);
+  }
+
+  if (!data?.redirect_url) throw new Error("Missing Affirm redirect_url");
+
+  window.location.href = data.redirect_url as string;
 }
 
 export default function CartDrawer() {
@@ -38,22 +62,27 @@ export default function CartDrawer() {
 
     try {
       setLoading(true);
-
-      // Optional UX: close cart immediately so it feels responsive
       open(false);
-
       await startStripeCheckout(state.items);
-      // NOTE: redirect happens inside startStripeCheckout
     } catch (e: any) {
-      // Re-open cart so user can try again
       open(true);
       alert(e?.message || "Checkout error");
       setLoading(false);
     }
   };
 
-  const checkoutAffirm = () => {
-    alert("Affirm is not enabled yet. We can activate it once your Affirm merchant account is ready.");
+  const checkoutAffirm = async () => {
+    if (!state.items.length || loading) return;
+
+    try {
+      setLoading(true);
+      open(false);
+      await startAffirmCheckout(state.items);
+    } catch (e: any) {
+      open(true);
+      alert(e?.message || "Affirm checkout error");
+      setLoading(false);
+    }
   };
 
   return (
@@ -121,8 +150,8 @@ export default function CartDrawer() {
               {loading ? "Redirecting..." : "Pay with Stripe"}
             </button>
 
-            <button className="btn btn-outline" type="button" disabled={state.items.length === 0} onClick={checkoutAffirm}>
-              Pay with Affirm (soon)
+            <button className="btn btn-outline" type="button" disabled={!canCheckout} onClick={checkoutAffirm}>
+              {loading ? "Redirecting..." : "Pay with Affirm"}
             </button>
 
             <button className="btn btn-small btn-outline" type="button" disabled={state.items.length === 0} onClick={clear}>

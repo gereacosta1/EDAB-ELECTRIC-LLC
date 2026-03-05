@@ -1,18 +1,43 @@
+// netlify/functions/create-stripe-checkout.ts
 import type { Handler } from "@netlify/functions";
 import Stripe from "stripe";
 
 type CartItem = {
   id: number;
   name: string;
-  price: number;
+  price: number; // USD
   image?: string;
   qty: number;
 };
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY;
+function clampQty(qty: any) {
+  const n = Number(qty);
+  if (!Number.isFinite(n)) return 1;
+  return Math.max(1, Math.min(99, Math.floor(n)));
+}
+
+function toCents(price: any) {
+  const n = Number(price);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.round(n * 100));
+}
+
+function buildAbsoluteImageUrl(origin: string, image?: string) {
+  if (!image) return undefined;
+  if (image.startsWith("http://") || image.startsWith("https://")) return image;
+
+  // Normaliza para que siempre quede con una sola "/"
+  if (image.startsWith("/")) return `${origin}${image}`;
+  return `${origin}/${image}`;
+}
 
 export const handler: Handler = async (event) => {
   try {
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
+    }
+
+    const stripeSecret = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecret) {
       return {
         statusCode: 500,
@@ -20,13 +45,9 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    if (event.httpMethod !== "POST") {
-      return { statusCode: 405, body: "Method Not Allowed" };
-    }
-
     const stripe = new Stripe(stripeSecret, { apiVersion: "2024-06-20" });
 
-    const parsed = JSON.parse(event.body || "{}");
+    const parsed = event.body ? JSON.parse(event.body) : {};
     const items: CartItem[] = Array.isArray(parsed.items) ? parsed.items : [];
 
     if (!items.length) {
@@ -38,17 +59,23 @@ export const handler: Handler = async (event) => {
     const host = event.headers["x-forwarded-host"] || event.headers.host;
     const origin = `${proto}://${host}`;
 
-    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((it) => ({
-      quantity: it.qty,
-      price_data: {
-        currency: "usd",
-        unit_amount: Math.round(it.price * 100),
-        product_data: {
-          name: it.name,
-          images: it.image ? [`${origin}${it.image}`] : undefined,
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((it) => {
+      const qty = clampQty(it.qty);
+      const unit_amount = toCents(it.price);
+      const img = buildAbsoluteImageUrl(origin, it.image);
+
+      return {
+        quantity: qty,
+        price_data: {
+          currency: "usd",
+          unit_amount,
+          product_data: {
+            name: String(it.name || `Item ${it.id}`),
+            images: img ? [img] : undefined,
+          },
         },
-      },
-    }));
+      };
+    });
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

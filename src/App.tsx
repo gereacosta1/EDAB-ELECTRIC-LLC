@@ -11,7 +11,52 @@ export default function App() {
   const [menuPanelOpen, setMenuPanelOpen] = useState(false);
 
   // Cart
-  const { open: openCart, count: cartCount, add: addToCart } = useCart();
+  const { open: openCart, count: cartCount, add: addToCart, clear } = useCart();
+
+  // ✅ Handle Stripe/Affirm return params (SPA-friendly) + clear cart on success
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const stripeSuccess = params.get("success") === "1";
+    const stripeCanceled = params.get("canceled") === "1";
+
+    const affirmStatus = params.get("affirm"); // "confirm" | "cancel" | null
+
+    let changed = false;
+
+    if (stripeSuccess) {
+      clear();
+      alert("Payment successful ✅");
+      params.delete("success");
+      changed = true;
+    }
+
+    if (stripeCanceled) {
+      alert("Payment canceled.");
+      params.delete("canceled");
+      changed = true;
+    }
+
+    if (affirmStatus === "confirm") {
+      clear();
+      alert("Affirm payment started ✅");
+      params.delete("affirm");
+      changed = true;
+    }
+
+    if (affirmStatus === "cancel") {
+      alert("Affirm payment canceled.");
+      params.delete("affirm");
+      changed = true;
+    }
+
+    if (changed) {
+      // Limpia la URL sin recargar (mantiene hash #)
+      const newQuery = params.toString();
+      const newUrl = `${window.location.pathname}${newQuery ? `?${newQuery}` : ""}${window.location.hash || ""}`;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, [clear]);
 
   // Details modal state
   const [detailsProduct, setDetailsProduct] = useState<Product | null>(null);
@@ -45,9 +90,7 @@ export default function App() {
 
   const askForModel = (p: Product) => {
     setInquiryCategory(p.category);
-    setInquiryMessage(
-      `Hi! I’m interested in ${p.name} (${formatUSD(p.price)}). Can you confirm availability and final price?`
-    );
+    setInquiryMessage(`Hi! I’m interested in ${p.name} (${formatUSD(p.price)}). Can you confirm availability and final price?`);
     closeDetails();
     setTimeout(() => {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -174,11 +217,7 @@ export default function App() {
       <CartDrawer />
 
       {/* Overlay menu */}
-      <div
-        className={`nav-overlay ${menuPanelOpen ? "open" : ""}`}
-        aria-hidden={!menuPanelOpen}
-        onClick={() => setMenuPanelOpen(false)}
-      >
+      <div className={`nav-overlay ${menuPanelOpen ? "open" : ""}`} aria-hidden={!menuPanelOpen} onClick={() => setMenuPanelOpen(false)}>
         <div
           id="edab-overlay-menu"
           className="nav-overlay-panel"
@@ -219,12 +258,7 @@ export default function App() {
           <div className="nav-overlay-right">
             <div className="nav-overlay-top">
               <p>Navigation</p>
-              <button
-                type="button"
-                className="nav-overlay-close"
-                onClick={() => setMenuPanelOpen(false)}
-                aria-label="Close menu"
-              >
+              <button type="button" className="nav-overlay-close" onClick={() => setMenuPanelOpen(false)} aria-label="Close menu">
                 <span />
                 <span />
               </button>
@@ -382,8 +416,8 @@ export default function App() {
 
               <div className="hero-content-right">
                 <p className="hero-description">
-                  EDAB ELECTRIC LLC offers electric scooters and e-bikes with a stronger visual identity and a premium browsing
-                  experience designed for modern customers.
+                  EDAB ELECTRIC LLC offers electric scooters and e-bikes with a stronger visual identity and a premium browsing experience
+                  designed for modern customers.
                 </p>
 
                 <div className="hero-actions">
@@ -571,9 +605,8 @@ export default function App() {
 
             <div className="impact-bottom">
               <p>
-                EDAB ELECTRIC LLC combines practical electric mobility options with a cleaner, stronger visual presence. The
-                goal is simple: help customers discover the right scooter or e-bike faster, with a premium and modern browsing
-                experience.
+                EDAB ELECTRIC LLC combines practical electric mobility options with a cleaner, stronger visual presence. The goal is simple:
+                help customers discover the right scooter or e-bike faster, with a premium and modern browsing experience.
               </p>
 
               <div className="impact-stats">
@@ -677,8 +710,8 @@ export default function App() {
               </h2>
 
               <p>
-                Contact EDAB ELECTRIC LLC for pricing, availability, and model details. We can help you choose the best option
-                based on your daily use, range, and budget.
+                Contact EDAB ELECTRIC LLC for pricing, availability, and model details. We can help you choose the best option based on your
+                daily use, range, and budget.
               </p>
 
               <div className="contact-list">

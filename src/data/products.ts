@@ -1,12 +1,13 @@
+// src/data/products.ts
 export type ProductCategory = "Scooters" | "E-Bikes";
 
 export type Product = {
   id: number;
   name: string;
   category: ProductCategory;
-  price: number;
+  price: number; // USD (ej 1000, 1999.99)
   badge?: string;
-  image: string;
+  image: string; // preferiblemente "/img/..."
   description: string;
   specs: string[];
 };
@@ -119,6 +120,8 @@ export function formatUSD(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
-    maximumFractionDigits: 0,
+    // Si mañana ponés 1299.99, se va a ver bien.
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: value % 1 === 0 ? 0 : 2,
   }).format(value);
 }
