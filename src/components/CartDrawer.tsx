@@ -85,7 +85,7 @@ export default function CartDrawer() {
 
       const msg = String(e?.message || "");
       if (msg.includes("public-api-key-invalid")) {
-        alert("Affirm is pending merchant activation. Please use Stripe for now.");
+        alert("Affirm is not fully activated yet. Please use Stripe for now.");
       } else {
         alert(msg || "Affirm checkout error");
       }
@@ -97,10 +97,11 @@ export default function CartDrawer() {
   return (
     <div className={`cart-drawer ${state.isOpen ? "open" : ""}`} aria-hidden={!state.isOpen} onClick={() => open(false)}>
       <div className="cart-panel" role="dialog" aria-modal="true" aria-label="Cart" onClick={(e) => e.stopPropagation()}>
+        
         <div className="cart-top">
           <div>
-            <p className="cart-kicker">Cart</p>
-            <h3 className="cart-title">Your items</h3>
+            <p className="cart-kicker">Your Cart</p>
+            <h3 className="cart-title">Selected items</h3>
           </div>
           <button className="details-close" type="button" onClick={() => open(false)} aria-label="Close cart">
             <span />
@@ -110,22 +111,25 @@ export default function CartDrawer() {
 
         <div className="cart-body">
           {state.items.length === 0 ? (
-            <p className="cart-empty">Your cart is empty.</p>
+            <p className="cart-empty">No items yet.</p>
           ) : (
             <div className="cart-items">
               {state.items.map((it) => (
                 <div className="cart-item" key={it.id}>
+                  
                   <div className="cart-item-media">
                     <img src={it.image || ""} alt={it.name} />
                   </div>
 
                   <div className="cart-item-main">
+                    
                     <div className="cart-item-head">
                       <strong>{it.name}</strong>
                       <span className="cart-item-price">{formatUSD(it.price)}</span>
                     </div>
 
                     <div className="cart-item-controls">
+                      
                       <label className="cart-qty">
                         Qty
                         <input
@@ -141,6 +145,7 @@ export default function CartDrawer() {
                         Remove
                       </button>
                     </div>
+
                   </div>
                 </div>
               ))}
@@ -149,23 +154,41 @@ export default function CartDrawer() {
         </div>
 
         <div className="cart-bottom">
+          
           <div className="cart-subtotal">
             <span>Subtotal</span>
             <strong>{formatUSD(subtotal)}</strong>
           </div>
 
           <div className="cart-actions">
-            <button className="btn btn-primary" type="button" disabled={!canCheckout} onClick={checkoutStripe}>
-              {loading ? "Redirecting..." : "Pay with Stripe"}
+            
+            <button
+              className="btn btn-primary"
+              type="button"
+              disabled={!canCheckout}
+              onClick={checkoutStripe}
+            >
+              {loading ? "Redirecting..." : "Checkout"}
             </button>
 
-            <button className="btn btn-outline" type="button" disabled={!canCheckout} onClick={checkoutAffirm}>
+            <button
+              className="btn btn-outline"
+              type="button"
+              disabled={!canCheckout}
+              onClick={checkoutAffirm}
+            >
               {loading ? "Redirecting..." : "Pay with Affirm"}
             </button>
 
-            <button className="btn btn-small btn-outline" type="button" disabled={state.items.length === 0} onClick={clear}>
+            <button
+              className="btn btn-small btn-outline"
+              type="button"
+              disabled={state.items.length === 0}
+              onClick={clear}
+            >
               Clear cart
             </button>
+
           </div>
         </div>
       </div>

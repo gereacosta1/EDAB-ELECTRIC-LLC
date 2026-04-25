@@ -16,10 +16,12 @@
   --line: rgba(255, 255, 255, 0.12);
   --line-2: rgba(255, 255, 255, 0.18);
 
-  --green: #63c51f;
-  --green-2: #3fb10f;
-  --green-3: #8eff47;
-  --green-glow: rgba(99, 197, 31, 0.35);
+ /* PREMIER MOTORS PALETTE */
+
+--green: #ff3b1f;        /* rojo principal */
+--green-2: #c91420;      /* rojo oscuro */
+--green-3: #ff8a1c;      /* naranja highlight */
+--green-glow: rgba(255, 59, 31, 0.35);
 
   --black-card: #0b0e0b;
   --white: #ffffff;
@@ -64,11 +66,11 @@ body {
     "Segoe UI",
     Roboto,
     sans-serif;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(99, 197, 31, 0.08), transparent 35%),
-    radial-gradient(circle at 90% 10%, rgba(99, 197, 31, 0.05), transparent 34%),
-    linear-gradient(180deg, #070907 0%, #090b09 100%);
-  color: var(--text);
+ background:
+  radial-gradient(circle at 12% 12%, rgba(255, 59, 31, 0.15), transparent 35%),
+  radial-gradient(circle at 85% 18%, rgba(74, 99, 255, 0.12), transparent 35%),
+  radial-gradient(circle at 60% 85%, rgba(255, 138, 28, 0.08), transparent 40%),
+  linear-gradient(180deg, #05050a 0%, #090812 100%);
 }
 
 a {
@@ -230,7 +232,7 @@ main {
   justify-content: space-between;
   gap: 14px;
   padding: 10px;
-  border-radius: 20px;
+  border: 1px solid rgba(255, 59, 31, 0.18);
   border: 1px solid var(--line);
   background:
     linear-gradient(180deg, rgba(11, 14, 11, 0.8), rgba(8, 10, 8, 0.72));
@@ -363,9 +365,10 @@ main {
 }
 
 .btn-primary {
-  background: linear-gradient(180deg, var(--green), var(--green-2));
-  color: #051005;
-  box-shadow: 0 14px 28px rgba(99, 197, 31, 0.26);
+  background: linear-gradient(135deg, #ff3b1f, #ff7a18);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 20px rgba(255, 59, 31, 0.4);
 }
 
 .btn-primary:hover {
@@ -790,7 +793,7 @@ main {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.015));
   box-shadow: var(--shadow-soft);
-  padding: clamp(14px, 2.5vw, 22px);
+  padding: 40px;
 }
 
 /* Categories */
@@ -1167,24 +1170,25 @@ main {
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 28px;
 }
 
 .product-card {
   border-radius: 20px;
   overflow: hidden;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #111018;
   box-shadow: var(--shadow-card);
   display: grid;
   grid-template-rows: auto 1fr;
+    transition: all 0.25s ease;
 }
 
 .product-media {
   position: relative;
   aspect-ratio: 1.6 / 1;
   overflow: hidden;
-  background: #0c0f0c;
+   background: #f2f2f2;
 }
 
 .product-media::after {
@@ -1226,7 +1230,7 @@ main {
 
 .product-title-row strong {
   white-space: nowrap;
-  color: var(--green);
+  color: #ff8a1c;
   font-size: 15px;
   line-height: 1;
 }
@@ -2911,5 +2915,626 @@ main {
 
   .carousel-thumb img {
     height: 120px;
+  }
+}
+
+/* =========================================================
+   FIX HERO PREMIER (para tu App.tsx actual)
+   ========================================================= */
+
+.premier-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 20px;
+
+  min-height: 520px;
+  padding: 40px 20px;
+
+  border-radius: 28px;
+  border: 1px solid var(--line);
+
+  background:
+    radial-gradient(circle at 20% 30%, rgba(99,197,31,0.12), transparent 40%),
+    linear-gradient(180deg, #070907 0%, #0a0d0a 100%);
+
+  box-shadow: var(--shadow-card);
+}
+
+/* TEXTO */
+.premier-hero-content {
+  display: grid;
+  gap: 14px;
+  max-width: 520px;
+}
+
+.premier-hero-content h1 {
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1;
+  margin: 0;
+}
+
+.premier-hero-text {
+  color: rgba(255,255,255,0.7);
+  max-width: 45ch;
+}
+
+/* BOTONES */
+.premier-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* INFO */
+.premier-hero-info {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.premier-hero-info span {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+}
+
+.premier-hero-info strong {
+  font-size: 14px;
+}
+
+/* IMAGEN (CLAVE) */
+.premier-hero-visual {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 59, 31, 0.2), transparent 60%);
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.premier-hero-visual img {
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+/* =========================================================
+   PREMIER MOTORS COLOR OVERRIDE
+   Logo colors: red / orange / blue / dark racing style
+   ========================================================= */
+
+:root {
+  --bg: #05050a;
+  --bg-2: #090812;
+
+  --green: #ff3b1f;
+  --green-2: #d91f12;
+  --green-3: #ff8a1c;
+  --green-glow: rgba(255, 59, 31, 0.35);
+
+  --text: #f7f7fb;
+  --muted: #bfc2d8;
+  --soft: #e9e9f5;
+
+  --line: rgba(255, 255, 255, 0.14);
+  --line-2: rgba(255, 255, 255, 0.22);
+
+  --black-card: #080811;
+}
+
+/* BODY BACKGROUND */
+body {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 59, 31, 0.18), transparent 34%),
+    radial-gradient(circle at 85% 15%, rgba(74, 99, 255, 0.16), transparent 34%),
+    radial-gradient(circle at 50% 90%, rgba(255, 138, 28, 0.1), transparent 36%),
+    linear-gradient(180deg, #05050a 0%, #090812 100%);
+}
+
+/* NAVBAR */
+.topbar {
+  border-color: rgba(255, 59, 31, 0.22);
+  background:
+    linear-gradient(180deg, rgba(16, 14, 22, 0.9), rgba(7, 7, 13, 0.82));
+}
+
+/* HERO */
+.premier-hero {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(255, 59, 31, 0.18), transparent 35%),
+    radial-gradient(circle at 85% 35%, rgba(74, 99, 255, 0.16), transparent 40%),
+    linear-gradient(135deg, #06060b 0%, #11101a 55%, #08070d 100%);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* MAIN TITLES */
+.section-header h2 span,
+.premier-hero-content h1 span {
+  color: #ff3b1f;
+}
+
+/* BUTTONS */
+.btn-primary,
+.catalog-filters button.active,
+.topbar-actions .nav-cta,
+.nav .nav-cta {
+  background: linear-gradient(135deg, #ff8a1c 0%, #ff3b1f 45%, #c91420 100%);
+  color: #fff;
+  box-shadow: 0 14px 32px rgba(255, 59, 31, 0.28);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 18px 40px rgba(255, 59, 31, 0.38);
+}
+
+.btn-outline:hover {
+  border-color: rgba(255, 59, 31, 0.45);
+  box-shadow: 0 0 0 4px rgba(255, 59, 31, 0.1);
+}
+
+/* BADGES */
+.badge {
+  background: linear-gradient(135deg, #ff8a1c 0%, #ff3b1f 100%);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(255, 59, 31, 0.28);
+}
+
+/* PRODUCT PRICE */
+.product-title-row strong,
+.contact-list a,
+.carousel-price {
+  color: #ff8a1c;
+}
+
+/* CARDS */
+.product-card,
+.catalog-block,
+.contact-block,
+.footer,
+.about-panel,
+.carousel-shell {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(74, 99, 255, 0.08), transparent 35%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* CHIPS */
+.chip {
+  background: rgba(12, 12, 20, 0.78);
+  border-color: rgba(255, 59, 31, 0.22);
+}
+
+/* LOGO IN NAVBAR */
+.brand-mark {
+  border-color: rgba(255, 59, 31, 0.35);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 138, 28, 0.18), transparent 65%),
+    rgba(255, 255, 255, 0.04);
+}
+
+
+/* =========================================================
+   PREMIER MOTORS FINAL VISUAL FIX
+   Text contrast + logo color palette
+   ========================================================= */
+
+.edab-app,
+.edab-app * {
+  color-scheme: dark;
+}
+
+.premier-hero,
+.catalog-block,
+.about-block,
+.about-panel,
+.contact-block,
+.contact-panel,
+.footer,
+.carousel-block,
+.carousel-shell {
+  color: #f7f7fb;
+}
+
+.premier-hero h1,
+.premier-hero h2,
+.premier-hero h3,
+.catalog-block h1,
+.catalog-block h2,
+.catalog-block h3,
+.about-block h1,
+.about-block h2,
+.about-block h3,
+.contact-block h1,
+.contact-block h2,
+.contact-block h3,
+.footer h1,
+.footer h2,
+.footer h3 {
+  color: #ffffff;
+}
+
+.premier-hero p,
+.catalog-block p,
+.about-block p,
+.contact-block p,
+.footer p,
+.product-body p,
+.carousel-desc {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.premier-hero-info span,
+.about-stats span,
+.eyebrow {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.premier-hero-info strong,
+.about-stats strong,
+.contact-list a,
+.product-title-row strong,
+.carousel-price {
+  color: #ff8a1c;
+}
+
+/* HERO CLEANER */
+.premier-hero {
+  width: min(var(--maxw), calc(100% - 28px));
+  margin: 14px auto;
+  padding: clamp(28px, 5vw, 64px);
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    radial-gradient(circle at 12% 20%, rgba(255, 59, 31, 0.2), transparent 34%),
+    radial-gradient(circle at 88% 25%, rgba(45, 71, 255, 0.2), transparent 34%),
+    linear-gradient(135deg, #08070d 0%, #14101b 48%, #090710 100%);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.premier-hero-content h1 {
+  color: #fff;
+  text-shadow: 0 8px 30px rgba(0, 0, 0, 0.32);
+}
+
+.premier-hero-visual {
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255, 138, 28, 0.12), transparent 55%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.premier-hero-visual img {
+  background: transparent;
+  mix-blend-mode: lighten;
+}
+/* CATALOG */
+.catalog-block {
+  background:
+    
+      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))
+}
+
+.section-header h2 span {
+  color: #ff3b1f;
+}
+
+.product-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025));
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.product-media {
+  background: #f5f5f5;
+  border-radius: 16px;
+}
+
+.product-media img {
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+/* ABOUT FIX */
+.about-panel,
+.about-block {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.about-stats > div {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+/* CONTACT + FOOTER */
+.contact-panel,
+.footer {
+  background:
+    radial-gradient(circle at 85% 20%, rgba(45, 71, 255, 0.12), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015));
+}
+
+/* BUTTONS */
+.btn-primary,
+.catalog-filters button.active {
+  background: linear-gradient(135deg, #ff8a1c 0%, #ff3b1f 48%, #c91420 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 32px rgba(255, 59, 31, 0.3);
+}
+
+.btn-outline {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.badge {
+  background: linear-gradient(135deg, #ff8a1c 0%, #ff3b1f 100%);
+  color: #ffffff;
+}
+
+.spec-list li::before {
+  background: #ff3b1f;
+  box-shadow: 0 0 0 4px rgba(255, 59, 31, 0.12);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .premier-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+p {
+  color: rgba(255,255,255,0.75);
+}
+
+.product-card p {
+  color: rgba(255,255,255,0.7);
+}
+
+.about-panel p,
+.contact-panel p {
+  color: rgba(255,255,255,0.8);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85);
+}
+
+.btn-secondary:hover {
+  border-color: #ff3b1f;
+  color: #ff3b1f;
+}
+
+/* FINAL SIZE FIX */
+
+.catalog-featured {
+  display: grid;
+  grid-template-columns: 1fr 0.75fr;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 28px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.catalog-featured-media {
+  height: 360px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f3f3f3;
+}
+
+.catalog-featured-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 18px;
+}
+
+.catalog-featured-info {
+  display: grid;
+  gap: 12px;
+}
+
+.catalog-featured-info h3 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 0.95;
+}
+
+.catalog-featured-info strong {
+  color: #ff8a1c;
+  font-size: 24px;
+}
+
+.carousel-block {
+  margin-top: 18px;
+}
+
+.carousel-shell {
+  max-height: 680px;
+  overflow: hidden;
+}
+
+.carousel-media {
+  max-height: 560px;
+}
+
+.carousel-media img {
+  height: 560px;
+  object-fit: contain;
+  background: #f3f3f3;
+}
+
+.carousel-thumbs {
+  max-height: 560px;
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .catalog-featured {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-featured-media {
+    height: 280px;
+  }
+
+  .carousel-shell {
+    max-height: none;
+  }
+
+  .carousel-media img {
+    height: 360px;
+  }
+}
+
+/* HERO FINAL PREMIUM FIX */
+
+.premier-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  width: min(var(--maxw), calc(100% - 28px));
+  min-height: 560px;
+  margin: 18px auto 28px;
+  padding: clamp(42px, 6vw, 72px);
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background:
+    radial-gradient(circle at 16% 35%, rgba(255, 59, 31, 0.2), transparent 34%),
+    radial-gradient(circle at 88% 35%, rgba(45, 71, 255, 0.22), transparent 38%),
+    linear-gradient(135deg, #09070d 0%, #120d18 48%, #070812 100%);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+}
+
+.premier-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 59, 31, 0.1), transparent 45%),
+    radial-gradient(circle at 62% 52%, rgba(255, 138, 28, 0.16), transparent 34%);
+  pointer-events: none;
+}
+
+.premier-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+}
+
+.premier-hero-content h1 {
+  margin: 0;
+  max-width: 13ch;
+  font-size: clamp(54px, 6vw, 86px);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
+  color: #ffffff;
+  text-shadow: 0 16px 44px rgba(0, 0, 0, 0.38);
+}
+
+.premier-hero-text {
+  max-width: 44ch;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.premier-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.premier-hero-info {
+  display: grid;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.premier-hero-info span {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.premier-hero-info strong {
+  color: #ff8a1c;
+  font-size: 13px;
+}
+
+.premier-hero-visual {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 430px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 138, 28, 0.16), transparent 55%),
+    rgba(255, 255, 255, 0.035);
+  transform: translateX(-24px);
+}
+
+.premier-hero-visual::before {
+  content: "PREMIER";
+  position: absolute;
+  left: -120px;
+  bottom: 32px;
+  z-index: -1;
+  font-size: clamp(76px, 9vw, 140px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  color: rgba(255, 255, 255, 0.035);
+}
+
+.premier-hero-visual img {
+  width: min(100%, 520px);
+  max-height: 460px;
+  object-fit: contain;
+  border-radius: 24px;
+  background: #f2f2f2;
+  box-shadow:
+    0 28px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 900px) {
+  .premier-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .premier-hero-visual {
+    transform: none;
+  }
+
+  .premier-hero-content h1 {
+    max-width: 100%;
   }
 }
