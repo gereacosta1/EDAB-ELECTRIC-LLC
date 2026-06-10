@@ -75,24 +75,24 @@ export default function App() {
       <header className="topbar">
         <a href="#home" className="brand">
           <div className="brand-mark logo-mark">
-            <img src="/img/PREMIER-MOTORS.jpeg" alt="Premier Motors logo" />
+            <img src="/img/hitech-bg.jpeg" alt="HITECH AUTO SALES" />
           </div>
 
           <div className="brand-copy">
-            <strong>PREMIER MOTORS SF LLC</strong>
-            <small>Miami • Electric Vehicles</small>
+            <strong>HITECH AUTO SALES</strong>
+            <small>Hollywood, FL • Auto Sales</small>
           </div>
         </a>
 
         <nav className="nav nav-inline">
           <a href="#home">Home</a>
-          <a href="#catalog">Catalog</a>
+          <a href="#catalog">Inventory</a>
           <a href="#about">About</a>
           <a href="#contact">Contact</a>
         </nav>
 
         <button className="nav-cta" type="button" onClick={() => openCart(true)}>
-          Cart ({cartCount})
+          Selection ({cartCount})
         </button>
       </header>
 
@@ -101,21 +101,21 @@ export default function App() {
       <main>
         <section id="home" className="premier-hero">
           <div className="premier-hero-content">
-            <p className="eyebrow">PREMIER MOTORS SF LLC</p>
+            <p className="eyebrow">HITECH AUTO SALES</p>
 
-  <h1>
-  Electric mobility for
-  <br />
-  Miami streets
-</h1>
+            <h1>
+              Quality vehicles for
+              <br />
+              South Florida drivers
+            </h1>
 
             <p className="premier-hero-text">
-              Explore our electric vehicle catalog and contact us for availability, pricing, and local purchase options.
+              Explore our vehicle inventory and contact us for availability, pricing, and financing options in Hollywood, Florida.
             </p>
 
             <div className="premier-hero-actions">
               <a href="#catalog" className="btn btn-primary">
-                View Catalog
+                View Inventory
               </a>
 
               <a href="#contact" className="btn btn-outline">
@@ -126,27 +126,27 @@ export default function App() {
             <div className="premier-hero-info">
               <div>
                 <span>Phone</span>
-                <strong>786-968-1621</strong>
+                <strong>954-239-8159</strong>
               </div>
 
               <div>
                 <span>Location</span>
-                <strong>821 NE 79TH ST MIAMI FL 33138</strong>
+                <strong>1100 S State Road 7 Hollywood, FL 33023</strong>
               </div>
             </div>
           </div>
 
           <div className="premier-hero-visual">
-            <img src="/img/ebike-new (1).jpeg" alt="Premier Motors featured electric bike" />
+            <img src="/img/hitech-bg.jpeg" alt="HITECH AUTO SALES dealership location" />
           </div>
         </section>
 
         <section id="catalog" className="catalog-block section-shell">
           <div className="section-header">
             <div>
-              <p className="eyebrow">CATALOG</p>
+              <p className="eyebrow">INVENTORY</p>
               <h2>
-                Featured inventory <span>available in Miami</span>
+                Featured vehicles <span>available in Hollywood</span>
               </h2>
             </div>
 
@@ -192,7 +192,7 @@ export default function App() {
 
                 <div className="product-actions">
                   <button className="btn btn-primary" type="button" onClick={() => addToCart(catalogFeature)}>
-                    Buy now
+                    Add to selection
                   </button>
 
                   <button className="btn btn-outline" type="button" onClick={() => openDetails(catalogFeature)}>
@@ -230,7 +230,7 @@ export default function App() {
 
                   <div className="product-actions">
                     <button className="btn btn-small btn-primary" type="button" onClick={() => addToCart(p)}>
-                      Add to cart
+                      Add to selection
                     </button>
 
                     <button className="btn btn-small btn-outline" type="button" onClick={() => openDetails(p)}>
@@ -249,27 +249,27 @@ export default function App() {
           <div className="about-panel">
             <p className="eyebrow">ABOUT</p>
 
-            <h2>PREMIER MOTORS SF LLC</h2>
+            <h2>HITECH AUTO SALES</h2>
 
             <p>
-              Premier Motors SF LLC offers electric scooters, e-bikes, and mobility solutions for customers looking for practical,
-              modern transportation in Miami.
+              HITECH AUTO SALES offers quality vehicles and financing options for customers looking for reliable transportation
+              in South Florida.
             </p>
 
             <div className="about-stats">
               <div>
                 <span>Focus</span>
-                <strong>Electric Mobility</strong>
+                <strong>Auto Sales</strong>
               </div>
 
               <div>
                 <span>Location</span>
-                <strong>Miami, FL</strong>
+                <strong>Hollywood, FL</strong>
               </div>
 
               <div>
-                <span>Products</span>
-                <strong>Scooters • E-Bikes</strong>
+                <span>Inventory</span>
+                <strong>Cars • SUVs • Trucks</strong>
               </div>
             </div>
           </div>
@@ -282,13 +282,13 @@ export default function App() {
 
               <h2>Call or visit us</h2>
 
-              <p>Contact us for availability, pricing, and product details.</p>
+              <p>Contact us for availability, pricing, financing options, and vehicle details.</p>
             </div>
 
             <div className="contact-list">
-              <a href="tel:+17869681621">786-968-1621</a>
-              <p>821 NE 79TH ST MIAMI FL 33138</p>
-              <p>Miami • Electric Vehicles</p>
+              <a href="tel:+19542398159">954-239-8159</a>
+              <p>1100 S State Road 7 Hollywood, FL 33023</p>
+              <p>Hollywood, FL • Auto Sales</p>
             </div>
           </div>
         </section>
@@ -296,11 +296,11 @@ export default function App() {
 
       <footer className="footer section-shell">
         <div className="footer-brand">
-          <h3>PREMIER MOTORS SF LLC</h3>
-          <p>Electric scooters, e-bikes and mobility solutions in Miami.</p>
+          <h3>HITECH AUTO SALES</h3>
+          <p>Quality vehicles and financing options in Hollywood, Florida.</p>
         </div>
 
-        <p className="footer-copy">© {new Date().getFullYear()} PREMIER MOTORS SF LLC. All rights reserved.</p>
+        <p className="footer-copy">© {new Date().getFullYear()} HITECH AUTO SALES. All rights reserved.</p>
       </footer>
 
       <div className={`details-modal ${detailsOpen ? "open" : ""}`} aria-hidden={!detailsOpen} onClick={closeDetails}>
@@ -308,12 +308,12 @@ export default function App() {
           className="details-panel"
           role="dialog"
           aria-modal="true"
-          aria-label={detailsProduct ? `Details for ${detailsProduct.name}` : "Product details"}
+          aria-label={detailsProduct ? `Details for ${detailsProduct.name}` : "Vehicle details"}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="details-top">
             <div>
-              <p className="details-kicker">Product details</p>
+              <p className="details-kicker">Vehicle details</p>
               <h3 className="details-title">{detailsProduct?.name ?? ""}</h3>
             </div>
 
@@ -334,7 +334,7 @@ export default function App() {
               <div className="details-content">
                 <div className="details-price-row">
                   <strong className="details-price">{formatUSD(detailsProduct.price)}</strong>
-                  <span className="details-sub">Miami • In-store pickup / local inquiry</span>
+                  <span className="details-sub">Hollywood, FL • In-store visit / local inquiry</span>
                 </div>
 
                 <p className="details-desc">{detailsProduct.description}</p>
@@ -350,7 +350,7 @@ export default function App() {
 
                 <div className="details-actions">
                   <button className="btn btn-primary" type="button" onClick={() => addToCart(detailsProduct)}>
-                    Add to cart
+                    Add to selection
                   </button>
                   <button className="btn btn-outline" type="button" onClick={() => askForModel(detailsProduct)}>
                     Ask about it

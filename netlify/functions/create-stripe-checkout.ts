@@ -13,7 +13,7 @@ type CartItem = {
 function clampQty(qty: any) {
   const n = Number(qty);
   if (!Number.isFinite(n)) return 1;
-  return Math.max(1, Math.min(99, Math.floor(n)));
+  return 1;
 }
 
 function toCents(price: any) {
@@ -26,7 +26,6 @@ function buildAbsoluteImageUrl(origin: string, image?: string) {
   if (!image) return undefined;
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
 
-  // Normaliza para que siempre quede con una sola "/"
   if (image.startsWith("/")) return `${origin}${image}`;
   return `${origin}/${image}`;
 }
@@ -38,6 +37,7 @@ export const handler: Handler = async (event) => {
     }
 
     const stripeSecret = process.env.STRIPE_SECRET_KEY;
+
     if (!stripeSecret) {
       return {
         statusCode: 500,
@@ -51,10 +51,9 @@ export const handler: Handler = async (event) => {
     const items: CartItem[] = Array.isArray(parsed.items) ? parsed.items : [];
 
     if (!items.length) {
-      return { statusCode: 400, body: JSON.stringify({ error: "Cart is empty" }) };
+      return { statusCode: 400, body: JSON.stringify({ error: "Selection is empty" }) };
     }
 
-    // Detect site origin (Netlify headers)
     const proto = event.headers["x-forwarded-proto"] || "https";
     const host = event.headers["x-forwarded-host"] || event.headers.host;
     const origin = `${proto}://${host}`;
@@ -70,7 +69,8 @@ export const handler: Handler = async (event) => {
           currency: "usd",
           unit_amount,
           product_data: {
-            name: String(it.name || `Item ${it.id}`),
+            name: String(it.name || `Vehicle ${it.id}`),
+            description: "Vehicle inquiry / checkout request from HITECH AUTO SALES.",
             images: img ? [img] : undefined,
           },
         },
@@ -85,6 +85,12 @@ export const handler: Handler = async (event) => {
       billing_address_collection: "auto",
       shipping_address_collection: { allowed_countries: ["US"] },
       phone_number_collection: { enabled: true },
+      custom_text: {
+        submit: {
+          message:
+            "Final vehicle availability, taxes, title, registration, dealer fees, and financing terms must be confirmed directly with HITECH AUTO SALES.",
+        },
+      },
     });
 
     return {

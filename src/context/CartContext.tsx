@@ -31,53 +31,68 @@ function reducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "HYDRATE":
       return action.state;
+
     case "TOGGLE_OPEN":
       return { ...state, isOpen: action.value ?? !state.isOpen };
+
     case "ADD": {
       const existing = state.items.find((i) => i.id === action.product.id);
-      const items = existing
-        ? state.items.map((i) => (i.id === action.product.id ? { ...i, qty: i.qty + 1 } : i))
-        : state.items.concat({
-            id: action.product.id,
-            name: action.product.name,
-            price: action.product.price,
-            image: action.product.image,
-            qty: 1,
-          });
+
+      if (existing) {
+        return { ...state, isOpen: true };
+      }
+
+      const items = state.items.concat({
+        id: action.product.id,
+        name: action.product.name,
+        price: action.product.price,
+        image: action.product.image,
+        qty: 1,
+      });
+
       return { ...state, items, isOpen: true };
     }
+
     case "REMOVE":
       return { ...state, items: state.items.filter((i) => i.id !== action.id) };
+
     case "SET_QTY": {
-      const qty = Math.max(1, Math.min(99, action.qty));
+      const qty = Math.max(1, Math.min(1, action.qty));
       return { ...state, items: state.items.map((i) => (i.id === action.id ? { ...i, qty } : i)) };
     }
+
     case "CLEAR":
       return { ...state, items: [] };
+
     default:
       return state;
   }
 }
 
-const STORAGE_KEY = "edab_cart_v1";
+const STORAGE_KEY = "hitech_cart_v1";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, { items: [], isOpen: false });
 
-  // hydrate
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
+
       const parsed = JSON.parse(raw) as CartState;
       if (!parsed || !Array.isArray(parsed.items)) return;
-      dispatch({ type: "HYDRATE", state: { items: parsed.items, isOpen: false } });
+
+      const cleanItems = parsed.items.map((item) => ({
+        ...item,
+        qty: 1,
+      }));
+
+      dispatch({ type: "HYDRATE", state: { items: cleanItems, isOpen: false } });
     } catch {
       // ignore
     }
   }, []);
 
-  // persist
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ items: state.items, isOpen: false }));
@@ -87,7 +102,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [state.items]);
 
   const subtotal = useMemo(() => state.items.reduce((s, i) => s + i.price * i.qty, 0), [state.items]);
-  const count = useMemo(() => state.items.reduce((s, i) => s + i.qty, 0), [state.items]);
+  const count = useMemo(() => state.items.length, [state.items]);
 
   const value = useMemo(
     () => ({

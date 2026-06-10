@@ -18,7 +18,7 @@ function toCents(n: any) {
 function clampQty(qty: any) {
   const n = Number(qty);
   if (!Number.isFinite(n)) return 1;
-  return Math.max(1, Math.min(99, Math.floor(n)));
+  return 1;
 }
 
 function requiredEnv(name: string) {
@@ -47,9 +47,8 @@ export const handler: Handler = async (event) => {
     const AFFIRM_PUBLIC_KEY = requiredEnv("AFFIRM_PUBLIC_KEY");
     const AFFIRM_PRIVATE_KEY = requiredEnv("AFFIRM_PRIVATE_KEY");
 
-    // PROD
     const AFFIRM_BASE_URL = normalizeBaseUrl(process.env.AFFIRM_BASE_URL || "https://api.affirm.com");
-    const SITE_URL = normalizeBaseUrl(process.env.SITE_URL || "https://edab-electric.com");
+    const SITE_URL = normalizeBaseUrl(process.env.SITE_URL || "https://hitechsales22.com");
 
     const body = event.body ? JSON.parse(event.body) : null;
     const items = (body?.items || []) as CartItem[];
@@ -63,7 +62,7 @@ export const handler: Handler = async (event) => {
       const qty = clampQty(it.qty);
 
       return {
-        display_name: String(it.name || `Item ${it.id}`),
+        display_name: String(it.name || `Vehicle ${it.id}`),
         sku: String(it.id),
         unit_price,
         qty,
@@ -72,14 +71,15 @@ export const handler: Handler = async (event) => {
       };
     });
 
-    const subtotal = affirmItems.reduce((s: number, it: any) => s + (Number(it.unit_price) || 0) * (Number(it.qty) || 0), 0);
+    const subtotal = affirmItems.reduce(
+      (sum: number, item: any) => sum + (Number(item.unit_price) || 0) * (Number(item.qty) || 0),
+      0
+    );
 
     const shipping_amount = 0;
     const tax_amount = 0;
-
     const total = subtotal + shipping_amount + tax_amount;
 
-    // ✅ Pre-validación (evita errores raros)
     if (!Number.isFinite(total) || !Number.isInteger(total) || total <= 0) {
       return {
         statusCode: 400,
@@ -90,14 +90,12 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    // SPA-friendly return
     const confirmUrl = `${SITE_URL}/?affirm=confirm`;
     const cancelUrl = `${SITE_URL}/?affirm=cancel`;
 
-    // ✅ IMPORTANTE: Direct Checkout espera los campos al TOP-LEVEL (no dentro de "checkout")
     const payload = {
       merchant: {
-        name: "EDAB ELECTRIC LLC",
+        name: "HITECH AUTO SALES",
         user_confirmation_url: confirmUrl,
         user_cancel_url: cancelUrl,
         user_confirmation_url_action: "GET",
@@ -121,6 +119,7 @@ export const handler: Handler = async (event) => {
     });
 
     const text = await res.text();
+
     let data: any = null;
     try {
       data = text ? JSON.parse(text) : null;

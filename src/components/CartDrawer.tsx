@@ -13,6 +13,7 @@ async function startStripeCheckout(items: CartItem[]) {
 
   let data: any = null;
   const text = await res.text();
+
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
@@ -34,6 +35,7 @@ async function startAffirmCheckout(items: CartItem[]) {
 
   let data: any = null;
   const text = await res.text();
+
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
@@ -45,6 +47,7 @@ async function startAffirmCheckout(items: CartItem[]) {
       data?.affirm?.code === "public-api-key-invalid"
         ? "public-api-key-invalid"
         : data?.affirm?.message || data?.affirm?.details || data?.error || "Affirm checkout failed";
+
     throw new Error(msg);
   }
 
@@ -54,7 +57,7 @@ async function startAffirmCheckout(items: CartItem[]) {
 }
 
 export default function CartDrawer() {
-  const { state, open, remove, setQty, subtotal, clear } = useCart();
+  const { state, open, remove, subtotal, clear } = useCart();
   const [loading, setLoading] = useState(false);
 
   const canCheckout = useMemo(() => state.items.length > 0 && !loading, [state.items.length, loading]);
@@ -84,8 +87,9 @@ export default function CartDrawer() {
       open(true);
 
       const msg = String(e?.message || "");
+
       if (msg.includes("public-api-key-invalid")) {
-        alert("Affirm is not fully activated yet. Please use Stripe for now.");
+        alert("Affirm is not fully activated yet. Please contact HITECH AUTO SALES or use checkout for now.");
       } else {
         alert(msg || "Affirm checkout error");
       }
@@ -96,14 +100,14 @@ export default function CartDrawer() {
 
   return (
     <div className={`cart-drawer ${state.isOpen ? "open" : ""}`} aria-hidden={!state.isOpen} onClick={() => open(false)}>
-      <div className="cart-panel" role="dialog" aria-modal="true" aria-label="Cart" onClick={(e) => e.stopPropagation()}>
-        
+      <div className="cart-panel" role="dialog" aria-modal="true" aria-label="Vehicle selection" onClick={(e) => e.stopPropagation()}>
         <div className="cart-top">
           <div>
-            <p className="cart-kicker">Your Cart</p>
-            <h3 className="cart-title">Selected items</h3>
+            <p className="cart-kicker">Your Selection</p>
+            <h3 className="cart-title">Selected vehicles</h3>
           </div>
-          <button className="details-close" type="button" onClick={() => open(false)} aria-label="Close cart">
+
+          <button className="details-close" type="button" onClick={() => open(false)} aria-label="Close selection">
             <span />
             <span />
           </button>
@@ -111,41 +115,28 @@ export default function CartDrawer() {
 
         <div className="cart-body">
           {state.items.length === 0 ? (
-            <p className="cart-empty">No items yet.</p>
+            <p className="cart-empty">No vehicles selected yet.</p>
           ) : (
             <div className="cart-items">
               {state.items.map((it) => (
                 <div className="cart-item" key={it.id}>
-                  
                   <div className="cart-item-media">
                     <img src={it.image || ""} alt={it.name} />
                   </div>
 
                   <div className="cart-item-main">
-                    
                     <div className="cart-item-head">
                       <strong>{it.name}</strong>
                       <span className="cart-item-price">{formatUSD(it.price)}</span>
                     </div>
 
                     <div className="cart-item-controls">
-                      
-                      <label className="cart-qty">
-                        Qty
-                        <input
-                          type="number"
-                          min={1}
-                          max={99}
-                          value={it.qty}
-                          onChange={(e) => setQty(it.id, Number(e.target.value))}
-                        />
-                      </label>
+                      <span className="cart-qty">Vehicle selected</span>
 
                       <button className="cart-remove" type="button" onClick={() => remove(it.id)}>
                         Remove
                       </button>
                     </div>
-
                   </div>
                 </div>
               ))}
@@ -154,41 +145,27 @@ export default function CartDrawer() {
         </div>
 
         <div className="cart-bottom">
-          
           <div className="cart-subtotal">
-            <span>Subtotal</span>
+            <span>Estimated total</span>
             <strong>{formatUSD(subtotal)}</strong>
           </div>
 
+          <p className="cart-note">
+            Prices are listed for reference. Contact HITECH AUTO SALES to confirm availability, final pricing, taxes, fees, and financing options.
+          </p>
+
           <div className="cart-actions">
-            
-            <button
-              className="btn btn-primary"
-              type="button"
-              disabled={!canCheckout}
-              onClick={checkoutStripe}
-            >
-              {loading ? "Redirecting..." : "Checkout"}
+            <button className="btn btn-primary" type="button" disabled={!canCheckout} onClick={checkoutStripe}>
+              {loading ? "Redirecting..." : "Start checkout"}
             </button>
 
-            <button
-              className="btn btn-outline"
-              type="button"
-              disabled={!canCheckout}
-              onClick={checkoutAffirm}
-            >
-              {loading ? "Redirecting..." : "Pay with Affirm"}
+            <button className="btn btn-outline" type="button" disabled={!canCheckout} onClick={checkoutAffirm}>
+              {loading ? "Redirecting..." : "Apply with Affirm"}
             </button>
 
-            <button
-              className="btn btn-small btn-outline"
-              type="button"
-              disabled={state.items.length === 0}
-              onClick={clear}
-            >
-              Clear cart
+            <button className="btn btn-small btn-outline" type="button" disabled={state.items.length === 0} onClick={clear}>
+              Clear selection
             </button>
-
           </div>
         </div>
       </div>

@@ -24,12 +24,12 @@ export default function CarouselShowcase({ products }: { products: Product[] }) 
   if (!active) return null;
 
   return (
-    <section className="carousel-block section-shell" aria-label="Featured product showcase">
+    <section className="carousel-block section-shell" aria-label="Featured vehicle showcase">
       <div className="carousel-header">
         <div>
           <p className="eyebrow">SHOWCASE</p>
           <h2>
-            Explore more <span>featured models</span>
+            Explore more <span>featured vehicles</span>
           </h2>
         </div>
 
@@ -53,17 +53,17 @@ export default function CarouselShowcase({ products }: { products: Product[] }) 
 
             <div className="carousel-actions">
               <button className="btn btn-primary" type="button" onClick={() => add(active)}>
-                Buy now
+                Add to selection
               </button>
 
               <a className="btn btn-outline" href="#catalog">
-                View in catalog
+                View inventory
               </a>
             </div>
           </div>
         </div>
 
-        <div className="carousel-thumbs" aria-label="All featured models">
+        <div className="carousel-thumbs" aria-label="All featured vehicles">
           {slides.map((p, i) => (
             <button
               key={p.id}
